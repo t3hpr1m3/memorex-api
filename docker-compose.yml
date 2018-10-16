@@ -1,0 +1,49 @@
+version: '3.5'
+services:
+  api:
+    build:
+      context: .
+    depends_on:
+      - db
+    environment:
+      - MIX_ENV=dev
+      - YOUTUBE_API_KEY=AIzaSyCplYpZgrQ_no84WG5_L3uWagcRv3jn71s
+      - DATABASE_URL=postgresql://memorex:memorex@db/development
+    networks:
+      - memorex-exposed
+      - memorex-api
+    ports:
+      - "4004:4000"
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
+      - type: volume
+        source: _build
+        target: /usr/src/app/_build
+        volume:
+          nocopy: true
+      - type: volume
+        source: deps
+        target: /usr/src/app/deps
+        volume:
+          nocopy: true
+  db:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_DB=development
+      - POSTGRES_USER=memorex
+      - POSTGRES_PASSWORD=memorex
+    networks:
+      - memorex-api
+networks:
+  memorex-exposed:
+    driver: bridge
+    name: memorex-exposed
+  memorex-api:
+    driver: bridge
+    name: memorex-api
+    internal: true
+volumes:
+  _build:
+  deps:
