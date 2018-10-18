@@ -1,41 +1,15 @@
-defmodule MemorexApi.Playlist do
-  alias __MODULE__
-
-  defmodule Thumbnail do
-    @derive Jason.Encoder
-    defstruct(
-      height: nil,
-      width: nil,
-      url: nil
-    )
-  end
-
-  defmodule PlaylistItem do
-    @derive Jason.Encoder
-    defstruct(
-      position: nil,
-      title: nil,
-      thumbnails: %{}
-    )
-  end
-
-  @derive Jason.Encoder
-  defstruct(
-    title: nil,
-    thumbnails: %{},
-    items: nil
-  )
+defmodule MemorexApi.YouTube.Client do
+  alias MemorexApi.YouTube.Playlist
 
   @root_url "https://www.googleapis.com/youtube/v3"
 
   def fetch(id) do
-    MemorexApi.YouTube.fetch(id)
-      # {:ok, playlist} ->
-      #   {:ok, Map.merge(playlist, %{items: items})}
-    # else
-      # {:err, err} ->
-      #   {:err, err}
-    # end
+    with {:ok, playlist} <- fetch_data(id),
+        {:ok, items} <- fetch_items(id) do
+      {:ok, Map.merge(playlist, %{items: items})}
+    else
+        err -> err
+    end
   end
 
   defp fetch_data(id) do
@@ -73,7 +47,7 @@ defmodule MemorexApi.Playlist do
             case status[:privacyStatus] do
               "public" ->
                 thumbnails = extract_thumbnails(snippet[:thumbnails])
-                [%PlaylistItem{title: snippet[:title], thumbnails: thumbnails, position: snippet[:position]} | acc]
+                [%Playlist.PlaylistItem{title: snippet[:title], thumbnails: thumbnails, position: snippet[:position]} | acc]
               _ ->
                 acc
             end
@@ -92,7 +66,7 @@ defmodule MemorexApi.Playlist do
     sizes = ~w(default high maxres medium standard)a
     Enum.reduce(sizes, %{}, fn (size, acc) ->
       if Map.has_key?(data, size) do
-        thumb = %Thumbnail{
+        thumb = %Playlist.Thumbnail{
           width: data[size][:width],
           height: data[size][:height],
           url: data[size][:url]

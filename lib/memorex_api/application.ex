@@ -11,9 +11,10 @@ defmodule MemorexApi.Application do
       # Start the Ecto repository
       MemorexApi.Repo,
       # Start the endpoint when the application starts
-      MemorexApiWeb.Endpoint
+      MemorexApiWeb.Endpoint,
       # Starts a worker by calling: MemorexApi.Worker.start_link(arg)
       # {MemorexApi.Worker, arg},
+      MemorexApi.YouTube
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

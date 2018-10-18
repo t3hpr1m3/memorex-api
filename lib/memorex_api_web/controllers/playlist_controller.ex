@@ -1,9 +1,11 @@
 defmodule MemorexApiWeb.PlaylistController do
   use MemorexApiWeb, :controller
 
+  alias MemorexApi.YouTube
+
   def show(conn, %{"id" => id}) do
-    case MemorexApi.Playlist.fetch(id) do
-      {:ok, %{} = playlist} ->
+    case YouTube.fetch(id) do
+      {:ok, %YouTube.Playlist{} = playlist} ->
         render(conn, "show.json", %{playlist: playlist})
       {:err, :not_found} ->
         conn
