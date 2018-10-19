@@ -1,6 +1,6 @@
 version: '3.5'
 services:
-  api:
+  app:
     build:
       context: .
     depends_on:
@@ -10,8 +10,10 @@ services:
       - YOUTUBE_API_KEY=AIzaSyCplYpZgrQ_no84WG5_L3uWagcRv3jn71s
       - DATABASE_URL=postgresql://memorex:memorex@db/development
     networks:
-      - memorex-exposed
-      - memorex-api
+      memorex-exposed:
+      memorex-api:
+        aliases:
+          - memorex-api
     ports:
       - "4004:4000"
     volumes:
