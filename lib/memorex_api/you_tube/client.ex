@@ -4,8 +4,8 @@ defmodule MemorexApi.YouTube.Client do
   @root_url "https://www.googleapis.com/youtube/v3"
 
   def fetch(id) do
-    with {:ok, playlist} <- fetch_data(id),
-        {:ok, items} <- fetch_items(id) do
+    with {:ok, %Playlist{} = playlist} <- fetch_data(id),
+         {:ok, [%Playlist.PlaylistItem{} | _] = items} <- fetch_items(id) do
       {:ok, Map.merge(playlist, %{items: items})}
     else
         err -> err
