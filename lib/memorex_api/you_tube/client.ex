@@ -34,7 +34,7 @@ defmodule MemorexApi.YouTube.Client do
   defp fetch_items(id, next_page_token, items) do
     params = %{
       playlistId: id,
-      maxResults: 25,
+      maxResults: 50,
       part: "snippet,status",
       pageToken: next_page_token
     }
